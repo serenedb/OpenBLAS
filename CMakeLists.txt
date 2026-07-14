@@ -132,7 +132,8 @@ else ()
 	set(OpenBLAS_LIBNAME ${LIBNAMEPREFIX}openblas${LIBNAMESUFFIX}${SUFFIX64_UNDERSCORE})
 endif ()
 
-set(BLASDIRS interface driver/level2 driver/level3 driver/others)
+# set(BLASDIRS interface driver/level2 driver/level3 driver/others) # SereneDB: original; driver/level2 (gemv/ger/trsv/...) unused, only sgemm_ needed
+set(BLASDIRS interface driver/level3 driver/others)
 
 if (NOT DYNAMIC_ARCH)
   list(APPEND BLASDIRS kernel)

@@ -47,23 +47,25 @@ foreach (GEMM_DEFINE ${GEMM_DEFINES})
 endforeach()
 endif()
 
-set(TRMM_TRSM_SOURCES
-  trmm_L.c
-  trmm_R.c
-  trsm_L.c
-  trsm_R.c)
+# SereneDB: TRMM/TRSM unused, only sgemm_ is called
+# set(TRMM_TRSM_SOURCES
+#   trmm_L.c
+#   trmm_R.c
+#   trsm_L.c
+#   trsm_R.c)
+#
+# foreach(trmm_trsm_source ${TRMM_TRSM_SOURCES})
+#   string(REGEX MATCH "[a-z]+_[A-Z]+" op_name ${trmm_trsm_source})
+#   GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "" 0 "${op_name}N")
+#   GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "TRANSA" 0 "${op_name}T")
+# endforeach()
 
-foreach(trmm_trsm_source ${TRMM_TRSM_SOURCES})
-  string(REGEX MATCH "[a-z]+_[A-Z]+" op_name ${trmm_trsm_source})
-  GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "" 0 "${op_name}N")
-  GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "TRANSA" 0 "${op_name}T")
-endforeach()
-
-GenerateCombinationObjects("symm_k.c" "RSIDE;LOWER" "L;U" "NN" 1)
-GenerateCombinationObjects("syrk_k.c" "LOWER;TRANS" "U;N" "" 1)
-GenerateCombinationObjects("syr2k_k.c" "LOWER;TRANS" "U;N" "" 1)
-GenerateCombinationObjects("syrk_kernel.c" "LOWER" "U" "" 2)
-GenerateCombinationObjects("syr2k_kernel.c" "LOWER" "U" "" 2)
+# SereneDB: SYMM/SYRK/SYR2K unused, only sgemm_ is called
+# GenerateCombinationObjects("symm_k.c" "RSIDE;LOWER" "L;U" "NN" 1)
+# GenerateCombinationObjects("syrk_k.c" "LOWER;TRANS" "U;N" "" 1)
+# GenerateCombinationObjects("syr2k_k.c" "LOWER;TRANS" "U;N" "" 1)
+# GenerateCombinationObjects("syrk_kernel.c" "LOWER" "U" "" 2)
+# GenerateCombinationObjects("syr2k_kernel.c" "LOWER" "U" "" 2)
 if (USE_THREAD)
 
   # N.B. these do NOT have a float type (e.g. DOUBLE) defined!
