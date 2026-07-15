@@ -56,16 +56,19 @@ include_directories(${PROJECT_BINARY_DIR})
 
 # TODO: USE_NETLIB_GEMV should switch gemv.c to netlib/*gemv.f
 # these all have 'z' sources for complex versions
-# SereneDB: BLAS2 unused, only sgemm_ is called
-# set(BLAS2_SOURCES
-#   gemv.c ger.c
-#   trsv.c trmv.c
-#   syr2.c gbmv.c
-#   sbmv.c spmv.c
-#   spr2.c
-#   tbsv.c tbmv.c
-#   tpsv.c tpmv.c
-# )
+# SereneDB: gemv.c kept -- GEMM_GEMV_FORWARD (driver/level3/gemm.c) calls sgemv_
+# directly for the M==1/N==1 rank-1 fast path, so it's a real internal GEMM
+# dependency, not a standalone BLAS2 entry point. Rest of BLAS2 still unused.
+set(BLAS2_SOURCES
+  gemv.c
+  # ger.c
+  # trsv.c trmv.c
+  # syr2.c gbmv.c
+  # sbmv.c spmv.c
+  # spr2.c
+  # tbsv.c tbmv.c
+  # tpsv.c tpmv.c
+)
 
 # SereneDB: BLAS2 unused, only sgemm_ is called
 # set(BLAS2_REAL_ONLY_SOURCES
@@ -121,7 +124,7 @@ foreach (CBLAS_FLAG ${CBLAS_FLAGS})
   # GenerateNamedObjects("${BLAS1_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${DISABLE_COMPLEX})
   # GenerateNamedObjects("${BLAS1_REAL_ONLY_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 1)
   # GenerateNamedObjects("${BLAS1_MANGLED_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
-  # GenerateNamedObjects("${BLAS2_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
+  GenerateNamedObjects("${BLAS2_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
   # GenerateNamedObjects("${BLAS2_REAL_ONLY_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 1)
   # if (NOT DEFINED NO_LAPACK)
   # GenerateNamedObjects("${BLAS2_COMPLEX_LAPACK_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
