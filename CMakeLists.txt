@@ -210,6 +210,8 @@ if(MSVC)
   set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/lib/Release)
 endif ()
 
+remove_definitions(-DDEBUG)
+
 # get obj vars into format that add_library likes: $<TARGET_OBJS:objlib> (see http://www.cmake.org/cmake/help/v3.0/command/add_library.html)
 set(TARGET_OBJS "")
 foreach (SUBDIR ${SUBDIRS})
