@@ -132,7 +132,9 @@ else ()
 	set(OpenBLAS_LIBNAME ${LIBNAMEPREFIX}openblas${LIBNAMESUFFIX}${SUFFIX64_UNDERSCORE})
 endif ()
 
-set(BLASDIRS interface driver/level2 driver/level3 driver/others)
+# # set(BLASDIRS interface driver/level2 driver/level3 driver/others) # SereneDB: original; driver/level2 (gemv/ger/trsv/...) unused, only sgemm_ needed
+set(BLASDIRS interface driver/level3 driver/others) # SereneDB: original; driver/level2 (gemv/ger/trsv/...) unused, only sgemm_ needed
+set(BLASDIRS interface driver/level3 driver/others)
 
 if (NOT DYNAMIC_ARCH)
   list(APPEND BLASDIRS kernel)
@@ -207,6 +209,8 @@ if(MSVC)
   set( CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/lib/Debug)
   set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/lib/Release)
 endif ()
+
+remove_definitions(-DDEBUG)
 
 # get obj vars into format that add_library likes: $<TARGET_OBJS:objlib> (see http://www.cmake.org/cmake/help/v3.0/command/add_library.html)
 set(TARGET_OBJS "")
