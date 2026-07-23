@@ -7,6 +7,13 @@ cmake_minimum_required(VERSION 3.16.0)
 set (CMAKE_ASM_SOURCE_FILE_EXTENSIONS "S")
 project(OpenBLAS C ASM)
 
+# ninja archives OpenBLAS's many objects via an @rspfile; BSD /usr/bin/ar
+# can't read @file, so use llvm-ar (CMAKE_CXX_COMPILER_AR), which can.
+if(APPLE AND CMAKE_CXX_COMPILER_AR)
+    set(CMAKE_CXX_CREATE_STATIC_LIBRARY
+        "\"${CMAKE_CXX_COMPILER_AR}\" qcs <TARGET> <OBJECTS>")
+endif()
+
 set(OpenBLAS_MAJOR_VERSION 0)
 set(OpenBLAS_MINOR_VERSION 3)
 set(OpenBLAS_PATCH_VERSION 33.dev)
