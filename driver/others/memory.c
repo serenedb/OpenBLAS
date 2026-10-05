@@ -2750,7 +2750,7 @@ struct newmemstruct
 };
 static volatile struct newmemstruct *newmemory;
 
-static volatile int memory_initialized = 0;
+static _Atomic int memory_initialized = 0;
 static int memory_overflowed = 0;
 /*       Memory allocation routine           */
 /* procpos ... indicates where it comes from */
@@ -2796,7 +2796,7 @@ void *blas_memory_alloc(int procpos){
   void *(**func)(void *address);
 
   if (!memory_initialized) {
-#if defined(SMP) && !defined(USE_OPENMP)
+#if (defined(SMP) || defined(USE_LOCKING)) && !defined(USE_OPENMP)
     LOCK_COMMAND(&alloc_lock);
     if (!memory_initialized) {
 #endif
@@ -2830,7 +2830,7 @@ void *blas_memory_alloc(int procpos){
 
     memory_initialized = 1;
     WMB;
-#if defined(SMP) && !defined(USE_OPENMP)
+#if (defined(SMP) || defined(USE_LOCKING)) && !defined(USE_OPENMP)
   }
   UNLOCK_COMMAND(&alloc_lock);
 #endif
