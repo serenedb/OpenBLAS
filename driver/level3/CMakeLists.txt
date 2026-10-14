@@ -47,24 +47,22 @@ foreach (GEMM_DEFINE ${GEMM_DEFINES})
 endforeach()
 endif()
 
-# SereneDB: TRMM/TRSM unused, only sgemm_ is called
-# set(TRMM_TRSM_SOURCES
-#   trmm_L.c
-#   trmm_R.c
-#   trsm_L.c
-#   trsm_R.c)
-#
-# foreach(trmm_trsm_source ${TRMM_TRSM_SOURCES})
-#   string(REGEX MATCH "[a-z]+_[A-Z]+" op_name ${trmm_trsm_source})
-#   GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "" 0 "${op_name}N")
-#   GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "TRANSA" 0 "${op_name}T")
-# endforeach()
+set(TRMM_TRSM_SOURCES
+  trmm_L.c
+  trmm_R.c
+  trsm_L.c
+  trsm_R.c)
 
-# SereneDB: SYMM/SYRK/SYR2K unused, only sgemm_ is called
-# GenerateCombinationObjects("symm_k.c" "RSIDE;LOWER" "L;U" "NN" 1)
-# GenerateCombinationObjects("syrk_k.c" "LOWER;TRANS" "U;N" "" 1)
-# GenerateCombinationObjects("syr2k_k.c" "LOWER;TRANS" "U;N" "" 1)
-# GenerateCombinationObjects("syrk_kernel.c" "LOWER" "U" "" 2)
+foreach(trmm_trsm_source ${TRMM_TRSM_SOURCES})
+  string(REGEX MATCH "[a-z]+_[A-Z]+" op_name ${trmm_trsm_source})
+  GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "" 0 "${op_name}N")
+  GenerateCombinationObjects("${trmm_trsm_source}" "UPPER;UNIT" "L;N" "TRANSA" 0 "${op_name}T")
+endforeach()
+
+GenerateCombinationObjects("symm_k.c" "RSIDE;LOWER" "L;U" "NN" 1)
+GenerateCombinationObjects("syrk_k.c" "LOWER;TRANS" "U;N" "" 1)
+GenerateCombinationObjects("syr2k_k.c" "LOWER;TRANS" "U;N" "" 1)
+GenerateCombinationObjects("syrk_kernel.c" "LOWER" "U" "" 2)
 
 # GEMMT / GEMMTR: one driver per uplo x op(A) x op(B) (the same set of
 # op combinations as GEMM), plus the conjugating variants of the
@@ -90,7 +88,7 @@ foreach (GEMMT_UPLO U L)
   GenerateNamedObjects("syrk_kernel.c" "CONJB;${GEMMT_UPLO_DEFS}" "gemmt_kernel_${GEMMT_UPLO}NC" 0 "" "" false 2)
   GenerateNamedObjects("syrk_kernel.c" "CONJA;CONJB;${GEMMT_UPLO_DEFS}" "gemmt_kernel_${GEMMT_UPLO}CC" 0 "" "" false 2)
 endforeach ()
-# GenerateCombinationObjects("syr2k_kernel.c" "LOWER" "U" "" 2)
+GenerateCombinationObjects("syr2k_kernel.c" "LOWER" "U" "" 2)
 if (USE_THREAD)
 
   # N.B. these do NOT have a float type (e.g. DOUBLE) defined!

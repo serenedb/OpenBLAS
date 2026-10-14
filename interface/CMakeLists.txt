@@ -30,75 +30,63 @@ include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_BINARY_DIR})
 
 
-# SereneDB: BLAS1 unused, only sgemm_ is called
-# set(BLAS1_SOURCES
-#   copy.c
-#   nrm2.c
-# )
+set(BLAS1_SOURCES
+  copy.c
+  nrm2.c
+)
 
-# SereneDB: BLAS1 unused, only sgemm_ is called
-# set(BLAS1_REAL_ONLY_SOURCES
-#   rotm.c rotmg.c # N.B. these do not have complex counterparts
-#   rot.c
-#   asum.c
-#   sum.c
-# )
+set(BLAS1_REAL_ONLY_SOURCES
+  rotm.c rotmg.c # N.B. these do not have complex counterparts
+  rot.c
+  asum.c
+  sum.c
+)
 
 # these will have 'z' prepended for the complex version
-# SereneDB: BLAS1 unused, only sgemm_ is called
-# set(BLAS1_MANGLED_SOURCES
-#   axpy.c swap.c
-#   scal.c
-#   dot.c
-#   rotg.c
-#   axpby.c
-# )
+set(BLAS1_MANGLED_SOURCES
+  axpy.c swap.c
+  scal.c
+  dot.c
+  rotg.c
+  axpby.c
+)
 
 # TODO: USE_NETLIB_GEMV should switch gemv.c to netlib/*gemv.f
 # these all have 'z' sources for complex versions
-# SereneDB: gemv.c kept -- GEMM_GEMV_FORWARD (driver/level3/gemm.c) calls sgemv_
-# directly for the M==1/N==1 rank-1 fast path, so it's a real internal GEMM
-# dependency, not a standalone BLAS2 entry point. Rest of BLAS2 still unused.
 set(BLAS2_SOURCES
-  gemv.c
-  # ger.c
-  # trsv.c trmv.c
-  # syr2.c gbmv.c
-  # sbmv.c spmv.c
-  # spr2.c
-  # tbsv.c tbmv.c
-  # tpsv.c tpmv.c
+  gemv.c ger.c
+  trsv.c trmv.c 
+  syr2.c gbmv.c
+  sbmv.c spmv.c
+  spr2.c
+  tbsv.c tbmv.c
+  tpsv.c tpmv.c
 )
 
-# SereneDB: BLAS2 unused, only sgemm_ is called
-# set(BLAS2_REAL_ONLY_SOURCES
-#   symv.c syr.c spr.c
-# )
-# SereneDB: already dead under NO_LAPACK=1; BLAS2 unused anyway, only sgemm_ is called
-# set(BLAS2_COMPLEX_LAPACK_SOURCES
-#   symv.c syr.c spr.c
-# )
+set(BLAS2_REAL_ONLY_SOURCES
+  symv.c syr.c spr.c
+)
+set(BLAS2_COMPLEX_LAPACK_SOURCES
+  symv.c syr.c spr.c
+)
 
-# SereneDB: already dead once complex is off; BLAS2 unused anyway, only sgemm_ is called
-# set(BLAS2_COMPLEX_ONLY_MANGLED_SOURCES
-#   hemv.c hbmv.c
-#   her.c her2.c
-#   hpmv.c hpr.c
-#   hpr2.c
-# )
+set(BLAS2_COMPLEX_ONLY_MANGLED_SOURCES
+  hemv.c hbmv.c
+  her.c her2.c
+  hpmv.c hpr.c
+  hpr2.c
+)
 
 # these do not have separate 'z' sources
 set(BLAS3_SOURCES
-  gemm.c
-  # symm.c              # SereneDB: unused, only sgemm_ is called
-  # trsm.c syrk.c syr2k.c gemmt.c  # SereneDB: unused, only sgemm_ is called
+  gemm.c symm.c
+  trsm.c syrk.c syr2k.c gemmt.c
 )
 
-# SereneDB: unused, only sgemm_ is called
-# set(BLAS3_MANGLED_SOURCES
-#   omatcopy.c imatcopy.c
-#   geadd.c
-# )
+set(BLAS3_MANGLED_SOURCES
+  omatcopy.c imatcopy.c
+  geadd.c
+)
 
 # generate the BLAS objs once with and once without cblas
 set (CBLAS_FLAGS "")
@@ -120,70 +108,65 @@ foreach (CBLAS_FLAG ${CBLAS_FLAGS})
 #    set(DISABLE_COMPLEX 1)
 #    set(MANGLE_COMPLEX 1)
   endif ()
-  # SereneDB: BLAS1/BLAS2 unused, only sgemm_ is called; source lists commented out above
-  # GenerateNamedObjects("${BLAS1_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${DISABLE_COMPLEX})
-  # GenerateNamedObjects("${BLAS1_REAL_ONLY_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 1)
-  # GenerateNamedObjects("${BLAS1_MANGLED_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
+  GenerateNamedObjects("${BLAS1_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${DISABLE_COMPLEX})
+  GenerateNamedObjects("${BLAS1_REAL_ONLY_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 1)
+  GenerateNamedObjects("${BLAS1_MANGLED_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
   GenerateNamedObjects("${BLAS2_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
-  # GenerateNamedObjects("${BLAS2_REAL_ONLY_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 1)
-  # if (NOT DEFINED NO_LAPACK)
-  # GenerateNamedObjects("${BLAS2_COMPLEX_LAPACK_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
-  # endif ()
-  # GenerateNamedObjects("${BLAS2_COMPLEX_ONLY_MANGLED_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 4)
+  GenerateNamedObjects("${BLAS2_REAL_ONLY_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 1)
+  if (NOT DEFINED NO_LAPACK)
+  GenerateNamedObjects("${BLAS2_COMPLEX_LAPACK_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
+  endif ()
+  GenerateNamedObjects("${BLAS2_COMPLEX_ONLY_MANGLED_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false 4)
   GenerateNamedObjects("${BLAS3_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${DISABLE_COMPLEX})
-  # GenerateNamedObjects("${BLAS3_MANGLED_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})  # SereneDB: unused, only sgemm_ is called
+  GenerateNamedObjects("${BLAS3_MANGLED_SOURCES}" "" "" ${CBLAS_FLAG} "" "" false ${MANGLE_COMPLEX})
 
   GenerateNamedObjects("xerbla.c" "" "xerbla" ${CBLAS_FLAG} "" "" true)
   #sdsdot, dsdot
-  # SereneDB: unused, only sgemm_ is called
-  # if (BUILD_SINGLE OR BUILD_DOUBLE)
-  # GenerateNamedObjects("sdsdot.c" "" "sdsdot" ${CBLAS_FLAG} "" "" true "SINGLE")
-  # GenerateNamedObjects("gemm_batch.c" "" "gemm_batch" ${CBLAS_FLAG} "" "" false)
-  # GenerateNamedObjects("gemm_batch_strided.c" "" "gemm_batch_strided" ${CBLAS_FLAG} "" "" false)
-  # endif ()
-# if (BUILD_DOUBLE)
-#   GenerateNamedObjects("dsdot.c" "" "dsdot" ${CBLAS_FLAG} "" "" true "SINGLE")
-# endif ()
+  if (BUILD_SINGLE OR BUILD_DOUBLE)
+  GenerateNamedObjects("sdsdot.c" "" "sdsdot" ${CBLAS_FLAG} "" "" true "SINGLE")
+  GenerateNamedObjects("gemm_batch.c" "" "gemm_batch" ${CBLAS_FLAG} "" "" false)
+  GenerateNamedObjects("gemm_batch_strided.c" "" "gemm_batch_strided" ${CBLAS_FLAG} "" "" false)
+  endif ()
+if (BUILD_DOUBLE)
+  GenerateNamedObjects("dsdot.c" "" "dsdot" ${CBLAS_FLAG} "" "" true "SINGLE")
+endif ()
 
   # trmm is trsm with a compiler flag set
-  # SereneDB: this is TRMM, not GEMM; unused, only sgemm_ is called
-  # GenerateNamedObjects("trsm.c" "TRMM" "trmm" ${CBLAS_FLAG})
-
+  GenerateNamedObjects("trsm.c" "TRMM" "trmm" ${CBLAS_FLAG})
+  
   # gemmtr is gemmt under the name adopted by the Reference BLAS
-  # SereneDB: reuses gemm.c's filename but builds the distinct gemmtr/gemmt symbol; unused, only sgemm_ is called
-  # GenerateNamedObjects("gemmt.c" "RNAME" "gemmtr" ${CBLAS_FLAG})
+  GenerateNamedObjects("gemmt.c" "RNAME" "gemmtr" ${CBLAS_FLAG})
 
   # absolute max and imax are compiled 4 times but non-absolute does not exist for complex
-  # SereneDB: pure BLAS1, unused, only sgemm_ is called
-# if (BUILD_SINGLE)
-#   GenerateNamedObjects("max.c" "" "smax" ${CBLAS_FLAG} "" "" true "SINGLE")
-# endif()
-# if (BUILD_DOUBLE)
-#   GenerateNamedObjects("max.c" "" "dmax" ${CBLAS_FLAG} "" "" true "DOUBLE")
-# endif()
-#   GenerateNamedObjects("max.c" "USE_ABS" "amax" ${CBLAS_FLAG})
-#   GenerateNamedObjects("max.c" "USE_ABS;USE_MIN" "amin" ${CBLAS_FLAG})
-# if (BUILD_SINGLE)
-#   GenerateNamedObjects("max.c" "USE_MIN" "smin" ${CBLAS_FLAG} "" "" true "SINGLE")
-# endif()
-# if (BUILD_DOUBLE)
-#   GenerateNamedObjects("max.c" "USE_MIN" "dmin" ${CBLAS_FLAG} "" "" true "DOUBLE")
-# endif()
+if (BUILD_SINGLE)
+  GenerateNamedObjects("max.c" "" "smax" ${CBLAS_FLAG} "" "" true "SINGLE")
+endif()
+if (BUILD_DOUBLE)
+  GenerateNamedObjects("max.c" "" "dmax" ${CBLAS_FLAG} "" "" true "DOUBLE")
+endif()
+  GenerateNamedObjects("max.c" "USE_ABS" "amax" ${CBLAS_FLAG})
+  GenerateNamedObjects("max.c" "USE_ABS;USE_MIN" "amin" ${CBLAS_FLAG})
+if (BUILD_SINGLE)
+  GenerateNamedObjects("max.c" "USE_MIN" "smin" ${CBLAS_FLAG} "" "" true "SINGLE")
+endif()
+if (BUILD_DOUBLE)
+  GenerateNamedObjects("max.c" "USE_MIN" "dmin" ${CBLAS_FLAG} "" "" true "DOUBLE")
+endif()
 
-# if (BUILD_SINGLE)
-#   GenerateNamedObjects("imax.c" "" "ismax" ${CBLAS_FLAG} "" "" true "SINGLE")
-# endif()
-# if (BUILD_DOUBLE)
-#   GenerateNamedObjects("imax.c" "" "idmax" ${CBLAS_FLAG} "" "" true "DOUBLE")
-# endif()
-#   GenerateNamedObjects("imax.c" "USE_ABS" "i*amax" ${CBLAS_FLAG})
-#   GenerateNamedObjects("imax.c" "USE_ABS;USE_MIN" "i*amin" ${CBLAS_FLAG})
-# if (BUILD_SINGLE)
-#   GenerateNamedObjects("imax.c" "USE_MIN" "ismin" ${CBLAS_FLAG} "" "" true "SINGLE")
-# endif()
-# if (BUILD_DOUBLE)
-#   GenerateNamedObjects("imax.c" "USE_MIN" "idmin" ${CBLAS_FLAG} "" "" true "DOUBLE")
-# endif()
+if (BUILD_SINGLE)
+  GenerateNamedObjects("imax.c" "" "ismax" ${CBLAS_FLAG} "" "" true "SINGLE")
+endif()
+if (BUILD_DOUBLE)
+  GenerateNamedObjects("imax.c" "" "idmax" ${CBLAS_FLAG} "" "" true "DOUBLE")
+endif()
+  GenerateNamedObjects("imax.c" "USE_ABS" "i*amax" ${CBLAS_FLAG})
+  GenerateNamedObjects("imax.c" "USE_ABS;USE_MIN" "i*amin" ${CBLAS_FLAG})
+if (BUILD_SINGLE)
+  GenerateNamedObjects("imax.c" "USE_MIN" "ismin" ${CBLAS_FLAG} "" "" true "SINGLE")
+endif()
+if (BUILD_DOUBLE)
+  GenerateNamedObjects("imax.c" "USE_MIN" "idmin" ${CBLAS_FLAG} "" "" true "DOUBLE")
+endif()
 
 if (BUILD_BFLOAT16)
   GenerateNamedObjects("scal.c" "BGEMM" "bscal" ${CBLAS_FLAG} "" "" true "BFLOAT16")
