@@ -242,7 +242,7 @@ int support_avx512(void)
   if ((ebx & (1 << 5)) == 0) {
     ret = 0; //cpu does not have avx2 flag
   }
-  if ((ebx & (1 << 31)) != 0) { //AVX512VL flag
+  if ((ebx & (1U << 31)) != 0) { //AVX512VL flag
     xgetbv(0, &eax, &edx);
     if ((eax & 0xe0) == 0xe0) ret = 1; //OS supports saving zmm registers
   }
@@ -396,7 +396,7 @@ int get_cputype(int gettype)
       if ((ecx & (1 << 16)) != 0) feature |= HAVE_FMA4;
 #endif
       if ((edx & (1 << 30)) != 0) feature |= HAVE_3DNOWEX;
-      if ((edx & (1 << 31)) != 0) feature |= HAVE_3DNOW;
+      if ((edx & (1U << 31)) != 0) feature |= HAVE_3DNOW;
     }
 
     if (have_excpuid() >= 0x1a) {
