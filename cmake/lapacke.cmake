@@ -2566,4 +2566,4 @@ endforeach ()
 
 set(lapacke_include_dir "${NETLIB_LAPACK_DIR}/LAPACKE/include")
 include_directories(${lapacke_include_dir})
-set_source_files_properties(${LAPACKE_SOURCES} PROPERTIES COMPILE_FLAGS "${LAPACK_CFLAGS} -fvisibility=default")
+set_source_files_properties(${LAPACKE_SOURCES} PROPERTIES COMPILE_FLAGS "${LAPACK_CFLAGS}")
